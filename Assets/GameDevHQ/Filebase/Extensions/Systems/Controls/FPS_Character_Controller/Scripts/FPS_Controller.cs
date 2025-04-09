@@ -17,6 +17,8 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         [SerializeField][Tooltip("How high can the controller jump?")]
         private float _jumpHeight = 15.0f; //how high can the character jump
         [SerializeField]
+        private bool _isRunning = false; //bool to display if we are running
+        [SerializeField]
         private bool _crouching = false; //bool to display if we are crouched or not
 
         private CharacterController _controller; //reference variable to the character controller component
@@ -45,22 +47,19 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             _controller = GetComponent<CharacterController>(); //assign the reference variable to the component
             _fpsCamera = GetComponentInChildren<Camera>();
             _initialCameraPos = _fpsCamera.transform.localPosition;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+
             FPSController();
             CameraController();
-            HeadBobbing();
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                _controller.height = 2.0f;
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                _controller.height = 1.0f;
-            }
+            HeadBobbing(); 
         }
 
         void FPSController()
@@ -71,16 +70,17 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             Vector3 direction = new Vector3(h, 0, v); //direction to move
             Vector3 velocity = direction * _walkSpeed; //velocity is the direction and speed we travel
 
-            if (Input.GetKeyDown(KeyCode.C))
+            if (Input.GetKeyDown(KeyCode.C) && _isRunning == false)
             {
-                _crouching = !_crouching;
 
                 if (_crouching == true)
                 {
+                    _crouching = false;
                     _controller.height = 2.0f;
                 }
                 else
                 {
+                    _crouching = true;
                     _controller.height = 1.0f;
                 }
                 
@@ -89,6 +89,11 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             if (Input.GetKey(KeyCode.LeftShift) && _crouching == false) //check if we are holding down left shift
             {
                 velocity = direction * _runSpeed; //use the run velocity 
+                _isRunning = true;
+            }
+            else
+            {
+                _isRunning = false;
             }
 
             if (_controller.isGrounded == true) //check if we're grounded
