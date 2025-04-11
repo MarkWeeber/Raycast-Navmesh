@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Enemy AI spawn manager
-// Has object pool to stire enemies
-// once enemy killed respawns it after some time
-// no enemy object is destroyed
+/// <summary>
+/// Enemy AI spawn manager
+/// Has object pool to stire enemies
+/// once enemy killed respawns it after some time
+/// no enemy object is destroyed
+/// </summary>
+
 public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
 {
     [SerializeField] private GameObject _enemyPrefab;
@@ -34,11 +38,13 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
             if (_spawnedObject.TryGetComponent<EnemyAI>(out _enemyAI))
             {
                 _enemyAI.OnKilled += OnEnemyKilled; // assign function to on killed action
+                _enemyAI.OnDestinationReached += OnDestinationReached;
                 _enemyAI.gameObject.SetActive(false);
                 _pool.Add(_enemyAI);
             }
         }
     }
+
 
     private void SpawnEnemiesOnStart()
     {
@@ -58,6 +64,11 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
         StartCoroutine(SpawnDelayedRoutine(enemyAI, _enemySpawnTimeAfterkilled));
     }
 
+    private void OnDestinationReached(EnemyAI enemyAI)
+    {
+        enemyAI.transform.position = transform.position;
+    }
+
     IEnumerator SpawnDelayedRoutine(EnemyAI enemyAI, float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
@@ -69,5 +80,6 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
         enemyAI.gameObject.SetActive(true);
         enemyAI.transform.position = transform.position;
         enemyAI.Destination = _targetDestination.position;
+        enemyAI.State = EnemyAI.EnemyState.Running;
     }    
 }

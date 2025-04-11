@@ -1,5 +1,59 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &13886065094339459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6395253721112634137}
+  - component: {fileID: 6223552570267067266}
+  m_Layer: 6
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6395253721112634137
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13886065094339459}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8426038447777612633}
+  - {fileID: 499161697963690790}
+  m_Father: {fileID: 5374324908947519160}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &6223552570267067266
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13886065094339459}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: f75a2b2584c03e44c91bfcae49aadfff, type: 2}
+  m_Controller: {fileID: 9100000, guid: e35bf514370a97e449a0046b98f0b394, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &335419249838504893
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,12 +774,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5374324908947519160}
-  - component: {fileID: 2050647267788221634}
   - component: {fileID: 196610522}
   - component: {fileID: 8012678476630369620}
-  m_Layer: 0
+  - component: {fileID: 2627476878092464338}
+  - component: {fileID: 5549021569234483774}
+  m_Layer: 6
   m_Name: Alien
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -741,32 +796,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8426038447777612633}
-  - {fileID: 499161697963690790}
+  - {fileID: 6395253721112634137}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &2050647267788221634
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4746407715136990210}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 40d241429b0622146a1a0820cb76a91c, type: 3}
-  m_Controller: {fileID: 9100000, guid: e35bf514370a97e449a0046b98f0b394, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!195 &196610522
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -777,7 +810,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -802,7 +835,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _agent: {fileID: 196610522}
-  _animator: {fileID: 2050647267788221634}
+  _animator: {fileID: 6223552570267067266}
+--- !u!136 &2627476878092464338
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4746407715136990210}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.29
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!54 &5549021569234483774
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4746407715136990210}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4990884941609553885
 GameObject:
   m_ObjectHideFlags: 0
@@ -920,11 +983,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5477978760429296297}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5374324908947519160}
+  m_Father: {fileID: 6395253721112634137}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &6975419036565037107
@@ -972,7 +1035,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 9209204109229201293, guid: 40d241429b0622146a1a0820cb76a91c, type: 3}
+  m_Mesh: {fileID: 4300000, guid: e7da9a291429b9b419cd26d717d78db4, type: 2}
   m_Bones:
   - {fileID: 499161697963690790}
   - {fileID: 4845690021717304847}
@@ -1176,13 +1239,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6487376048331608105}
   m_LocalRotation: {x: 0.071048856, y: 0.02291059, z: -0.032615185, w: 0.9966762}
-  m_LocalPosition: {x: -0.0012163719, y: 0.9716568, z: 0.0011616534}
+  m_LocalPosition: {x: -0.0012163719, y: 1, z: 0.0011616534}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5333569385254787309}
   - {fileID: 5542592810908294979}
   - {fileID: 4845690021717304847}
-  m_Father: {fileID: 5374324908947519160}
+  m_Father: {fileID: 6395253721112634137}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6501574266709555695
