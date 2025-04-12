@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 {
@@ -47,15 +45,19 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             _controller = GetComponent<CharacterController>(); //assign the reference variable to the component
             _fpsCamera = GetComponentInChildren<Camera>();
             _initialCameraPos = _fpsCamera.transform.localPosition;
-            Cursor.lockState = CursorLockMode.Locked;
+            
+            // overriden in Player class
+            //Cursor.lockState = CursorLockMode.Locked;
+
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Cursor.lockState = CursorLockMode.None;
-            }
+            // overriden in Player class
+            //if (Input.GetKeyDown(KeyCode.Escape))
+            //{
+            //    Cursor.lockState = CursorLockMode.None;
+            //}
 
             FPSController();
             CameraController();

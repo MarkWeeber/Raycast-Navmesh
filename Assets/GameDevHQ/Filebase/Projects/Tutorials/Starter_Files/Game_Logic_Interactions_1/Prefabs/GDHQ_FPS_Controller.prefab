@@ -187,15 +187,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3502090026857989382}
-  m_LocalRotation: {x: -0.025870528, y: -0.021061033, z: 0.013331274, w: 0.99935454}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.4810933, y: -0.5540042, z: 0.5081604}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 3502090026857568546}
   - {fileID: 3502090026857568544}
+  - {fileID: 6226563542767664124}
   m_Father: {fileID: 3497583046668441615}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -2.932, y: -2.455, z: 1.591}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3502090026860992774
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -570,6 +571,7 @@ GameObject:
   - component: {fileID: 3522221881866731913}
   - component: {fileID: 3534858390546826023}
   - component: {fileID: 3559926251135889283}
+  - component: {fileID: 5332701140634996062}
   m_Layer: 0
   m_Name: GDHQ_FPS_Controller
   m_TagString: Untagged
@@ -641,3 +643,55 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5332701140634996062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503760010013013579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 796083fa50fb1534599dc429588507b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fireCooldownRate: 0.5
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 448
+  _camera: {fileID: 3518291814107247131}
+  _FPS_Controller: {fileID: 3534858390546826023}
+  _laserBeamPrefab: {fileID: 7264457224052621341, guid: 53eb6f42bc2569244a0b4b46ca0bfc15, type: 3}
+  _laserBeamOriginTransform: {fileID: 6226563542767664124}
+  _laserBeamLifeTime: 0.3
+  _rayCastLength: 500
+--- !u!1 &6276227419498930966
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6226563542767664124}
+  m_Layer: 0
+  m_Name: LaserBeamOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6226563542767664124
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6276227419498930966}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.0051, y: 0.1139, z: 0.9355}
+  m_LocalScale: {x: 0.5, y: 0.50000006, z: 0.5}
+  m_Children: []
+  m_Father: {fileID: 3502090026857568550}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
