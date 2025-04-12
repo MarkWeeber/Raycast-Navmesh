@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
+/// base enemy AI management class
 /// has a simple state machine
 /// controls animator
 /// controls navmesh agent
 /// once killed calls all delegates on action OnKilled
+/// once reached destination calls all delegates on action OnDestinationReached
 /// </summary>
 public class EnemyAI : MonoBehaviour
 {
@@ -21,8 +23,9 @@ public class EnemyAI : MonoBehaviour
     private EnemyState _state;
     public EnemyState State { get => _state; set => SetState(value); }
     private Vector3 _destination;
+    public Vector3 Destination { get => _destination; set => SetNewDestination(value); } // everytime state is changed outside, the FSM function will be executed
     [SerializeField]
-    public Vector3 Destination { get => _destination; set => SetNewDestination(value); }
+    private int _killScore = 50;
     [SerializeField]
     private NavMeshAgent _agent;
     [SerializeField]
@@ -47,7 +50,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void SetState(EnemyState newState)
+    private void SetState(EnemyState newState) // main switch for FSM
     {
         switch (newState)
         {
@@ -63,9 +66,11 @@ public class EnemyAI : MonoBehaviour
                 _agent.isStopped = true;
                 _animator.Play("Alien_death_anim");
                 StopCoroutine(_resetStateRoutine);
+                UIManager.Instance.Score += _killScore;
                 OnKilled?.Invoke(this);
                 break;
             case EnemyState.DestinationReached:
+                _agent.isStopped = true;
                 StopCoroutine(_resetStateRoutine);
                 OnDestinationReached?.Invoke(this);
                 break;
@@ -82,6 +87,11 @@ public class EnemyAI : MonoBehaviour
         _resetStateRoutine = ResetStateRoutine(_state, duration);
         StartCoroutine(_resetStateRoutine);
         SetState(newState);
+    }
+
+    public void WarpAgent(Vector3 position)
+    {
+        _agent.Warp(position);
     }
 
     IEnumerator ResetStateRoutine(EnemyState initialState, float duration)

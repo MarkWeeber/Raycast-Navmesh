@@ -222,6 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetTag: Enemy
-  _setChance: 0.4
+  _setChance: 0.8
+  _instantSetState: 0
   _setStateDuration: 3
   _setState: 1

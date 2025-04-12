@@ -9,7 +9,6 @@ using UnityEngine;
 /// once enemy killed respawns it after some time
 /// no enemy object is destroyed
 /// </summary>
-
 public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
 {
     [SerializeField] private GameObject _enemyPrefab;
@@ -66,7 +65,9 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
 
     private void OnDestinationReached(EnemyAI enemyAI)
     {
-        enemyAI.transform.position = transform.position;
+        enemyAI.WarpAgent(transform.position);
+        enemyAI.Destination = _targetDestination.position;
+        enemyAI.State = EnemyAI.EnemyState.Running;
     }
 
     IEnumerator SpawnDelayedRoutine(EnemyAI enemyAI, float waitTime)
@@ -78,7 +79,7 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
     private void Spawn(EnemyAI enemyAI)
     {
         enemyAI.gameObject.SetActive(true);
-        enemyAI.transform.position = transform.position;
+        enemyAI.WarpAgent(transform.position);
         enemyAI.Destination = _targetDestination.position;
         enemyAI.State = EnemyAI.EnemyState.Running;
     }    
