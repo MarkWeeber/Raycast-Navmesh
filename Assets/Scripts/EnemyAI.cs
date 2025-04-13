@@ -10,6 +10,7 @@ using UnityEngine.AI;
 /// controls navmesh agent
 /// once killed calls all delegates on action OnKilled
 /// once reached destination calls all delegates on action OnDestinationReached
+/// for visuals spawns particle effects when killed or reached destination
 /// </summary>
 public class EnemyAI : MonoBehaviour
 {
@@ -30,9 +31,16 @@ public class EnemyAI : MonoBehaviour
     private NavMeshAgent _agent;
     [SerializeField]
     private Animator _animator;
+    [SerializeField]
+    private ParticleSystem _particlesWhenKilled;
+    [SerializeField]
+    private ParticleSystem _particlesWhenReachedDestination;
+    [SerializeField]
+    private Vector3 _particleSystemSpawnOffset = Vector3.up;
     public Action<EnemyAI> OnKilled;
     public Action<EnemyAI> OnDestinationReached;
 
+    private GameObject _instantiatedObject;
     private IEnumerator _resetStateRoutine;
 
     private void Start()
@@ -42,16 +50,17 @@ public class EnemyAI : MonoBehaviour
 
     private void SetNewDestination(Vector3 destination)
     {
+        _destination = destination;
         if (_agent != null)
         {
-            _destination = destination;
             _agent.destination = _destination;
-            _animator.Play("Alien_run_forward_anim");
+            SetState(EnemyState.Running);
         }
     }
 
     private void SetState(EnemyState newState) // main switch for FSM
     {
+        _state = newState;
         switch (newState)
         {
             case EnemyState.Running:
@@ -65,19 +74,23 @@ public class EnemyAI : MonoBehaviour
             case EnemyState.Dead:
                 _agent.isStopped = true;
                 _animator.Play("Alien_death_anim");
+                SpawnParticlesAtPosition(_particlesWhenKilled);
+                AudioManager.Instance.PlayEnemyKilledSound(transform.position);
                 StopCoroutine(_resetStateRoutine);
                 UIManager.Instance.Score += _killScore;
                 OnKilled?.Invoke(this);
                 break;
             case EnemyState.DestinationReached:
+                _particlesWhenReachedDestination.Play();
+                SpawnParticlesAtPosition(_particlesWhenReachedDestination);
                 _agent.isStopped = true;
+                AudioManager.Instance.PlayEnemyEscapedSound(transform.position);
                 StopCoroutine(_resetStateRoutine);
                 OnDestinationReached?.Invoke(this);
                 break;
             default:
                 break;
         }
-        _state = newState;
     }
 
     public void SetStateForDuration(EnemyState newState, float duration)
@@ -85,8 +98,8 @@ public class EnemyAI : MonoBehaviour
         
         StopCoroutine(_resetStateRoutine);
         _resetStateRoutine = ResetStateRoutine(_state, duration);
-        StartCoroutine(_resetStateRoutine);
         SetState(newState);
+        StartCoroutine(_resetStateRoutine);
     }
 
     public void WarpAgent(Vector3 position)
@@ -98,6 +111,12 @@ public class EnemyAI : MonoBehaviour
     {
         yield return new WaitForSeconds(duration);
         SetState(initialState);
+    }
+    
+    private void SpawnParticlesAtPosition(ParticleSystem particleSystem)
+    {
+        _instantiatedObject = Instantiate(particleSystem.gameObject, transform.position + _particleSystemSpawnOffset, Quaternion.identity);
+        Destroy(_instantiatedObject, 2f);
     }
 
     private void OnDestroy()

@@ -67,7 +67,7 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
     {
         enemyAI.WarpAgent(transform.position);
         enemyAI.Destination = _targetDestination.position;
-        enemyAI.State = EnemyAI.EnemyState.Running;
+        //enemyAI.State = EnemyAI.EnemyState.Running;
     }
 
     IEnumerator SpawnDelayedRoutine(EnemyAI enemyAI, float waitTime)

@@ -834,8 +834,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db8c4a0a8a4ecd840a7f82ee885c5bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _killScore: 50
   _agent: {fileID: 196610522}
   _animator: {fileID: 6223552570267067266}
+  _particlesWhenKilled: {fileID: 8587003912904027181, guid: 7538a35c1cf6bcf469c9887281b0f656, type: 3}
+  _particlesWhenReachedDestination: {fileID: 2768027984622447214, guid: 1a2aa64f55d55254b9a1149c3ab457ba, type: 3}
 --- !u!136 &2627476878092464338
 CapsuleCollider:
   m_ObjectHideFlags: 0

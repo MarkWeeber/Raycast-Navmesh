@@ -64,15 +64,20 @@ public class Player : MonoBehaviour
 
     private void Fire()
     {
+        AudioManager.Instance.PlayLaserFireSound(transform.position);
         _ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         if (Physics.Raycast(_ray, out _hit, _rayCastLength, _targetMask))
         {
-            if (_hit.collider.TryGetComponent<EnemyAI>(out _enemyAI))
+            if (_hit.collider.TryGetComponent<EnemyAI>(out _enemyAI)) // enemy was hit
             {
                 if (_enemyAI.State != EnemyAI.EnemyState.Dead)
                 {
                     _enemyAI.State = EnemyAI.EnemyState.Dead;
                 }
+            }
+            else // barricade was hit
+            {
+                AudioManager.Instance.PlayLaserHitBarricadeSound(_hit.point);
             }
             // if enemy or barrel was hit, then render between hit point and laser beam origin
             SpawnLaserBeam(_laserBeamOriginTransform.position, _hit.point, _laserBeamLifeTime);
