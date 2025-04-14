@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +26,14 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
         _pool = new List<EnemyAI>();
         InstantiateEnemyPool();
         Invoke(nameof(SpawnEnemiesOnStart), _startSpawnDelay);
+        GameManager.Instance.OnGameLose += OnGameWinOrLose;
+        GameManager.Instance.OnGameWin += OnGameWinOrLose;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnGameLose -= OnGameWinOrLose;
+        GameManager.Instance.OnGameWin -= OnGameWinOrLose;
     }
 
     private void InstantiateEnemyPool() // fill the pool
@@ -45,8 +52,12 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
     }
 
 
-    private void SpawnEnemiesOnStart()
+    private void SpawnEnemiesOnStart() // recursive use
     {
+        if (!enabled)
+        {
+            return;
+        }
         if (_currentPoolIndex < _pool.Count) // yet to spawn from the pool
         {
             Spawn(_pool[_currentPoolIndex]);
@@ -67,7 +78,6 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
     {
         enemyAI.WarpAgent(transform.position);
         enemyAI.Destination = _targetDestination.position;
-        //enemyAI.State = EnemyAI.EnemyState.Running;
     }
 
     IEnumerator SpawnDelayedRoutine(EnemyAI enemyAI, float waitTime)
@@ -78,9 +88,19 @@ public class EnemyAISpawnManager : SingletonBehaviour<EnemyAISpawnManager>
 
     private void Spawn(EnemyAI enemyAI)
     {
+        if (!enabled)
+        {
+            return;
+        }
         enemyAI.gameObject.SetActive(true);
         enemyAI.WarpAgent(transform.position);
         enemyAI.Destination = _targetDestination.position;
         enemyAI.State = EnemyAI.EnemyState.Running;
-    }    
+    }
+
+    private void OnGameWinOrLose()
+    {
+        StopAllCoroutines();
+        enabled = false;
+    }
 }

@@ -19,14 +19,13 @@ public class EnemyAI : MonoBehaviour
         Running,
         Hiding,
         Dead,
-        DestinationReached
+        DestinationReached,
+        Idle
     }
     private EnemyState _state;
     public EnemyState State { get => _state; set => SetState(value); }
     private Vector3 _destination;
     public Vector3 Destination { get => _destination; set => SetNewDestination(value); } // everytime state is changed outside, the FSM function will be executed
-    [SerializeField]
-    private int _killScore = 50;
     [SerializeField]
     private NavMeshAgent _agent;
     [SerializeField]
@@ -46,6 +45,28 @@ public class EnemyAI : MonoBehaviour
     private void Start()
     {
         _resetStateRoutine = ResetStateRoutine(EnemyState.Running, 0f);
+        GameManager.Instance.OnGameLose += OnGameEnd;
+        GameManager.Instance.OnGameWin += OnGameEnd;
+    }
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnGameLose -= OnGameEnd;
+        GameManager.Instance.OnGameWin -= OnGameEnd;
+        // manually clearing delegates
+        if (OnKilled != null)
+        {
+            foreach (var action in OnKilled.GetInvocationList())
+            {
+                OnKilled -= (Action<EnemyAI>)action;
+            }
+        }
+        if (OnDestinationReached != null)
+        {
+            foreach (var action in OnDestinationReached.GetInvocationList())
+            {
+                OnDestinationReached -= (Action<EnemyAI>)action;
+            }
+        }
     }
 
     private void SetNewDestination(Vector3 destination)
@@ -61,6 +82,11 @@ public class EnemyAI : MonoBehaviour
     private void SetState(EnemyState newState) // main switch for FSM
     {
         _state = newState;
+        if (!enabled)
+        {
+            _agent.isStopped = true;
+            return;
+        }
         switch (newState)
         {
             case EnemyState.Running:
@@ -77,7 +103,7 @@ public class EnemyAI : MonoBehaviour
                 SpawnParticlesAtPosition(_particlesWhenKilled);
                 AudioManager.Instance.PlayEnemyKilledSound(transform.position);
                 StopCoroutine(_resetStateRoutine);
-                UIManager.Instance.Score += _killScore;
+                GameManager.Instance.Score++;
                 OnKilled?.Invoke(this);
                 break;
             case EnemyState.DestinationReached:
@@ -85,8 +111,13 @@ public class EnemyAI : MonoBehaviour
                 SpawnParticlesAtPosition(_particlesWhenReachedDestination);
                 _agent.isStopped = true;
                 AudioManager.Instance.PlayEnemyEscapedSound(transform.position);
+                GameManager.Instance.EnemiesEscaped++;
                 StopCoroutine(_resetStateRoutine);
                 OnDestinationReached?.Invoke(this);
+                break;
+            case EnemyState.Idle:
+                _agent.isStopped = true;
+                _animator.Play("Alien_idle_anim");
                 break;
             default:
                 break;
@@ -119,15 +150,10 @@ public class EnemyAI : MonoBehaviour
         Destroy(_instantiatedObject, 2f);
     }
 
-    private void OnDestroy()
+    private void OnGameEnd()
     {
-        //var invocationList = OnKilled.GetInvocationList();
-        //if (invocationList.Length > 1) // sometimes it throws errors so that's why additional check
-        //{
-        //    foreach (Action<EnemyAI> action in OnKilled.GetInvocationList()) // manually clear delegates
-        //    {
-        //        OnKilled -= action;
-        //    }
-        //}
+        SetState(EnemyState.Idle);
+        _agent.isStopped = true;
+        enabled = false;
     }
 }

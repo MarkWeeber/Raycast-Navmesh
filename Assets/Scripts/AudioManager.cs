@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Simple Audio Managing class, a singleton
-/// some functions will play sound is space, so it spatially blent
+/// in order to sound correctly spawns a gameobject in game scene space, so they are spatially blent
 /// </summary>
 public class AudioManager : SingletonBehaviour<AudioManager>
 {

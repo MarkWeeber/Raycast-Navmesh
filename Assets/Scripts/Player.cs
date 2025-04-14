@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class Player : MonoBehaviour
 {
+    [SerializeField] private int _ammoCount = 50;
     [SerializeField] private float _fireCooldownRate = 0.5f;
     [SerializeField] private LayerMask _targetMask;
     [SerializeField] private Camera _camera;
@@ -25,13 +26,20 @@ public class Player : MonoBehaviour
     private EnemyAI _enemyAI;
     private LineRenderer _laserRenderer;
     private GameObject _laserSpawnedObject;
-
-    private Vector3 pos1;
-    private Vector3 pos2;
+    private bool _focusWasLost;
 
     private void Start()
     {
         _fireCooldown.DropTime = Time.time + _fireCooldownRate;
+        UIManager.Instance.Ammo = _ammoCount;
+        GameManager.Instance.OnGameWin += OnGameWinOrLose;
+        GameManager.Instance.OnGameLose += OnGameWinOrLose;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnGameWin -= OnGameWinOrLose;
+        GameManager.Instance.OnGameLose -= OnGameWinOrLose;
     }
 
     private void Update()
@@ -42,9 +50,20 @@ public class Player : MonoBehaviour
 
     private void ManageFire()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame && _fireCooldown.IsReady(Time.time, _fireCooldownRate))
+        if (
+                Mouse.current.leftButton.wasPressedThisFrame            // Input System check
+                && _fireCooldown.IsReady(Time.time, _fireCooldownRate)  // Cooldown check
+                && _ammoCount > 0                                       // Available ammo check
+            )
         {
+            if (_focusWasLost) // if focus was lost and user clicked on game screen then user needs to click once again
+            {
+                _focusWasLost = false;
+                return;
+            }
             Fire();
+            _ammoCount--;
+            UIManager.Instance.Ammo = _ammoCount;
         }
     }
 
@@ -52,13 +71,11 @@ public class Player : MonoBehaviour
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            _FPS_Controller.enabled = true;
-            Cursor.lockState = CursorLockMode.Locked;
+            HideMouseCursorEnableFPSControls();
         }
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            Cursor.lockState = CursorLockMode.None;
-            _FPS_Controller.enabled = false;
+            RevealMouseCursorDisableFPSControls();
         }
     }
 
@@ -95,13 +112,11 @@ public class Player : MonoBehaviour
     {
         if (focus) // gain focus, hide cursor
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            _FPS_Controller.enabled = true;
+            HideMouseCursorEnableFPSControls();
         }
         else // lose focus - disable aim and movements
         {
-            Cursor.lockState = CursorLockMode.None;
-            _FPS_Controller.enabled = false;
+            RevealMouseCursorDisableFPSControls();
         }
     }
 
@@ -114,7 +129,30 @@ public class Player : MonoBehaviour
             _laserRenderer.SetPosition(1, end);
         }
         Destroy(_laserSpawnedObject, lifetTime);
-    }    
+    }
+
+    private void HideMouseCursorEnableFPSControls()
+    {
+        if (!enabled)
+        {
+            return;
+        }
+        Cursor.lockState = CursorLockMode.Locked;
+        _FPS_Controller.enabled = true;
+    }
+
+    private void RevealMouseCursorDisableFPSControls()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        _FPS_Controller.enabled = false;
+        _focusWasLost = true;
+    }
+
+    private void OnGameWinOrLose()
+    {
+        RevealMouseCursorDisableFPSControls();
+        enabled = false;
+    }
 }
 
 /// <summary>
