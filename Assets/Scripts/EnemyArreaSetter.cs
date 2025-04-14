@@ -28,7 +28,10 @@ public class EnemyArreaSetter : MonoBehaviour
         {
             if (collider.TryGetComponent<EnemyAI>(out _enemyAI))
             {
-                _enemyAI.State = _targetState;
+                if (_enemyAI.State != _targetState)
+                {
+                    _enemyAI.State = _targetState;
+                }
             }
         }
     }

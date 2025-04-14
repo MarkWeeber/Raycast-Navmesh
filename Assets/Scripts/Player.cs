@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 /// for visual idenity, each time shooting happens a laser beam is spawned
 /// also controls cursor visibility by overriding FPS_Controller class
 /// can trigger barrels via RayCastZone class
+/// can shoot barricades with health to reduce their health
 /// </summary>
 public class Player : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class Player : MonoBehaviour
     private GameObject _laserSpawnedObject;
     private bool _focusWasLost;
     private RayCastZone _rayCastZone;
+    private BarricadeWithHealth _barricadeWithHealth;
 
     private void Start()
     {
@@ -94,13 +96,16 @@ public class Player : MonoBehaviour
                     _enemyAI.State = EnemyAI.EnemyState.Dead;
                 }
             }
-            else // barricade was hit
+            else if (_hit.collider.TryGetComponent<RayCastZone>(out _rayCastZone)) // a raycast zone was hit
             {
-                if (_hit.collider.TryGetComponent<RayCastZone>(out _rayCastZone))
-                {
-                    _rayCastZone.Hit();
-                }
+                _rayCastZone.Hit();
                 AudioManager.Instance.PlayLaserHitBarricadeSound(_hit.point);
+            }
+            else if (_hit.collider.TryGetComponent<BarricadeWithHealth>(out _barricadeWithHealth)) // barricade with health was hit
+            {
+                _barricadeWithHealth.Hit();
+                AudioManager.Instance.PlayLaserHitBarricadeSound(_hit.point);
+                Debug.Log("HIT");
             }
             // if enemy or barrel was hit, then render between hit point and laser beam origin
             SpawnLaserBeam(_laserBeamOriginTransform.position, _hit.point, _laserBeamLifeTime);
@@ -109,9 +114,7 @@ public class Player : MonoBehaviour
         {
             SpawnLaserBeam(_laserBeamOriginTransform.position, _laserBeamOriginTransform.position + _laserBeamOriginTransform.forward * _rayCastLength, _laserBeamLifeTime);
         }
-        
     }
-
 
     // controlling cursor whenever application focus changes
     private void OnApplicationFocus(bool focus)
