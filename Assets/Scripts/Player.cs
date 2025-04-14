@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 /// Shoots at enemies using Raycasts
 /// for visual idenity, each time shooting happens a laser beam is spawned
 /// also controls cursor visibility by overriding FPS_Controller class
+/// can trigger barrels via RayCastZone class
 /// </summary>
 public class Player : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour
     private LineRenderer _laserRenderer;
     private GameObject _laserSpawnedObject;
     private bool _focusWasLost;
+    private RayCastZone _rayCastZone;
 
     private void Start()
     {
@@ -94,6 +96,10 @@ public class Player : MonoBehaviour
             }
             else // barricade was hit
             {
+                if (_hit.collider.TryGetComponent<RayCastZone>(out _rayCastZone))
+                {
+                    _rayCastZone.Hit();
+                }
                 AudioManager.Instance.PlayLaserHitBarricadeSound(_hit.point);
             }
             // if enemy or barrel was hit, then render between hit point and laser beam origin
